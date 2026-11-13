@@ -1,0 +1,623 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0, maximum-scale=1.0, user-scalable=no, viewport-fit=cover">
+  <title>Virti & Divyesh | #jodiVISHesh</title>
+  <link rel="preconnect" href="https://fonts.googleapis.com">
+  <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+  <link href="https://fonts.googleapis.com/css2?family=Cinzel:wght@500;600;700&family=Cormorant+Garamond:ital,wght@0,500;0,600;1,500&family=Montserrat:wght@400;500;600&display=swap" rel="stylesheet">
+  <style>
+    * {
+      box-sizing: border-box;
+      margin: 0;
+      padding: 0;
+      -webkit-tap-highlight-color: transparent;
+    }
+    body, html {
+      width: 100%;
+      height: 100%;
+      overflow: hidden;
+      background-color: #110d09;
+      font-family: 'Montserrat', sans-serif;
+      color: #3A2218;
+    }
+    .stage {
+      position: relative;
+      width: 100%;
+      max-width: 450px;
+      height: 100dvh;
+      margin: 0 auto;
+      overflow: hidden;
+      background: #FAF3E0;
+      box-shadow: 0 0 70px rgba(0, 0, 0, 0.9);
+    }
+    video.bg-reel {
+      position: absolute;
+      top: 50%;
+      left: 50%;
+      width: 100%;
+      height: 100%;
+      transform: translate(-50%, -50%);
+      object-fit: cover;
+      z-index: 1;
+    }
+
+    /* Ultra-clean Top Floating Controls */
+    .top-controls {
+      position: absolute;
+      top: 0;
+      left: 0;
+      width: 100%;
+      z-index: 10;
+      padding: 14px 16px;
+      padding-top: max(14px, env(safe-area-inset-top));
+      display: flex;
+      justify-content: flex-end;
+      align-items: center;
+      gap: 8px;
+      pointer-events: none;
+    }
+    .icon-btn {
+      pointer-events: auto;
+      width: 34px;
+      height: 34px;
+      border-radius: 50%;
+      background: rgba(255, 255, 255, 0.18);
+      backdrop-filter: blur(14px) saturate(160%);
+      -webkit-backdrop-filter: blur(14px) saturate(160%);
+      border: 1px solid rgba(255, 255, 255, 0.55);
+      box-shadow: 0 4px 14px rgba(0, 0, 0, 0.08), inset 0 1px 1px rgba(255, 255, 255, 0.8);
+      color: #4A2511;
+      display: flex;
+      align-items: center;
+      justify-content: center;
+      cursor: pointer;
+      transition: transform 0.2s ease, background 0.2s ease;
+    }
+    .icon-btn:active {
+      transform: scale(0.92);
+      background: rgba(255, 255, 255, 0.4);
+    }
+    .icon-btn svg {
+      width: 14px;
+      height: 14px;
+      stroke: currentColor;
+      fill: none;
+      stroke-width: 2;
+      stroke-linecap: round;
+      stroke-linejoin: round;
+    }
+
+    /* Final-Page-Only Liquid Crystal Glass Dock */
+    .glass-dock {
+      position: absolute;
+      bottom: 0;
+      left: 0;
+      width: 100%;
+      z-index: 10;
+      padding: 10px 14px;
+      padding-bottom: max(14px, env(safe-area-inset-bottom));
+      display: flex;
+      justify-content: center;
+      opacity: 0;
+      visibility: hidden;
+      transform: translateY(16px);
+      transition: opacity 0.6s ease, transform 0.6s cubic-bezier(0.16, 1, 0.3, 1), visibility 0.6s;
+      pointer-events: none;
+    }
+    .glass-dock.visible {
+      opacity: 1;
+      visibility: visible;
+      transform: translateY(0);
+      pointer-events: auto;
+    }
+
+    .liquid-bar {
+      position: relative;
+      display: flex;
+      align-items: center;
+      gap: 6px;
+      padding: 5px;
+      border-radius: 999px;
+      background: linear-gradient(135deg, rgba(255, 255, 255, 0.28) 0%, rgba(255, 250, 240, 0.12) 100%);
+      backdrop-filter: blur(22px) saturate(180%);
+      -webkit-backdrop-filter: blur(22px) saturate(180%);
+      border: 1px solid rgba(255, 255, 255, 0.65);
+      box-shadow:
+        0 10px 30px rgba(42, 24, 12, 0.14),
+        inset 0 1.5px 1px rgba(255, 255, 255, 0.85),
+        inset 0 -1px 2px rgba(184, 134, 45, 0.25);
+      overflow: hidden;
+    }
+
+    .liquid-bar::before {
+      content: "";
+      position: absolute;
+      top: 0;
+      left: -120%;
+      width: 60%;
+      height: 100%;
+      background: linear-gradient(90deg, transparent, rgba(255, 255, 255, 0.45), transparent);
+      transform: skewX(-25deg);
+      animation: glassSheen 5.5s infinite ease-in-out;
+      pointer-events: none;
+    }
+    @keyframes glassSheen {
+      0%, 60% { left: -120%; }
+      100% { left: 160%; }
+    }
+
+    .crystal-btn {
+      position: relative;
+      display: inline-flex;
+      align-items: center;
+      justify-content: center;
+      gap: 6px;
+      padding: 8px 15px;
+      border-radius: 999px;
+      font-family: 'Cinzel', serif;
+      font-size: 11px;
+      font-weight: 700;
+      letter-spacing: 1.1px;
+      text-transform: uppercase;
+      cursor: pointer;
+      color: #4A2C11;
+      background: linear-gradient(180deg, rgba(255, 255, 255, 0.42) 0%, rgba(255, 255, 255, 0.16) 100%);
+      border: 1px solid rgba(212, 175, 55, 0.48);
+      box-shadow:
+        0 2px 8px rgba(0, 0, 0, 0.05),
+        inset 0 1px 0 rgba(255, 255, 255, 0.9);
+      transition: all 0.22s ease;
+      white-space: nowrap;
+    }
+    .crystal-btn:hover {
+      background: linear-gradient(180deg, rgba(255, 255, 255, 0.65) 0%, rgba(255, 255, 255, 0.32) 100%);
+      border-color: rgba(197, 155, 39, 0.85);
+    }
+    .crystal-btn:active {
+      transform: scale(0.95);
+    }
+
+    .crystal-btn-gold {
+      background: linear-gradient(135deg, rgba(235, 200, 110, 0.42) 0%, rgba(212, 175, 55, 0.24) 100%);
+      border: 1px solid rgba(212, 175, 55, 0.85);
+      color: #3D220A;
+      box-shadow:
+        0 4px 14px rgba(184, 134, 45, 0.18),
+        inset 0 1px 1px rgba(255, 255, 255, 0.95);
+    }
+    .crystal-btn-gold:hover {
+      background: linear-gradient(135deg, rgba(235, 200, 110, 0.62) 0%, rgba(212, 175, 55, 0.38) 100%);
+    }
+
+    .crystal-btn svg {
+      width: 13px;
+      height: 13px;
+      stroke: #8A6218;
+      fill: none;
+      stroke-width: 2;
+      stroke-linecap: round;
+      stroke-linejoin: round;
+    }
+
+    /* Frosted Glass Modals */
+    .modal-backdrop {
+      display: none;
+      position: fixed;
+      top: 0;
+      left: 0;
+      width: 100%;
+      height: 100%;
+      background: rgba(18, 12, 8, 0.62);
+      backdrop-filter: blur(10px);
+      -webkit-backdrop-filter: blur(10px);
+      z-index: 100;
+      justify-content: center;
+      align-items: flex-end;
+    }
+    .modal-sheet {
+      width: 100%;
+      max-width: 450px;
+      background: linear-gradient(180deg, rgba(255, 252, 245, 0.92) 0%, rgba(250, 243, 224, 0.96) 100%);
+      backdrop-filter: blur(24px) saturate(160%);
+      -webkit-backdrop-filter: blur(24px) saturate(160%);
+      color: #3A2218;
+      border-radius: 28px 28px 0 0;
+      padding: 24px 20px;
+      padding-bottom: max(28px, env(safe-area-inset-bottom));
+      border-top: 1.5px solid rgba(255, 255, 255, 0.9);
+      box-shadow: 0 -14px 45px rgba(0, 0, 0, 0.55);
+      animation: slideUp 0.3s cubic-bezier(0.16, 1, 0.3, 1);
+      max-height: 88dvh;
+      overflow-y: auto;
+    }
+    @keyframes slideUp {
+      from { transform: translateY(100%); }
+      to { transform: translateY(0); }
+    }
+    .modal-top {
+      display: flex;
+      justify-content: space-between;
+      align-items: center;
+      margin-bottom: 18px;
+      padding-bottom: 12px;
+      border-bottom: 1px solid rgba(184, 134, 45, 0.22);
+    }
+    .modal-heading {
+      font-family: 'Cinzel', serif;
+      font-size: 15px;
+      font-weight: 700;
+      color: #5E3A12;
+      letter-spacing: 1.2px;
+    }
+    .close-btn {
+      width: 30px;
+      height: 30px;
+      border-radius: 50%;
+      background: rgba(184, 134, 45, 0.12);
+      border: 1px solid rgba(184, 134, 45, 0.3);
+      color: #5E3A12;
+      font-size: 14px;
+      font-weight: 600;
+      cursor: pointer;
+    }
+    .venue-stack {
+      display: flex;
+      flex-direction: column;
+      gap: 10px;
+    }
+    .venue-item {
+      display: flex;
+      align-items: center;
+      justify-content: space-between;
+      padding: 13px 15px;
+      background: rgba(255, 255, 255, 0.65);
+      border: 1px solid rgba(212, 175, 55, 0.42);
+      border-radius: 16px;
+      text-decoration: none;
+      color: #3A2218;
+      box-shadow: 0 3px 12px rgba(42, 24, 12, 0.04);
+      transition: background 0.2s ease;
+    }
+    .venue-item:active {
+      background: rgba(235, 200, 110, 0.25);
+    }
+    .venue-item h4 {
+      font-family: 'Cinzel', serif;
+      font-size: 12.5px;
+      font-weight: 700;
+      color: #6E4716;
+      margin-bottom: 3px;
+    }
+    .venue-item p {
+      font-size: 12px;
+      color: #5C4337;
+    }
+    .pin-go {
+      font-family: 'Cinzel', serif;
+      font-size: 11px;
+      font-weight: 700;
+      letter-spacing: 0.6px;
+      color: #6E4716;
+      background: linear-gradient(135deg, rgba(235, 200, 110, 0.35), rgba(212, 175, 55, 0.2));
+      border: 1px solid rgba(212, 175, 55, 0.6);
+      padding: 6px 11px;
+      border-radius: 999px;
+      white-space: nowrap;
+    }
+    .form-group {
+      margin-bottom: 14px;
+    }
+    .form-label {
+      display: block;
+      font-size: 10.5px;
+      font-weight: 600;
+      color: #6E4716;
+      margin-bottom: 6px;
+      text-transform: uppercase;
+      letter-spacing: 0.8px;
+    }
+    .form-input, .form-select {
+      width: 100%;
+      padding: 11px 14px;
+      border-radius: 14px;
+      border: 1px solid rgba(212, 175, 55, 0.45);
+      background: rgba(255, 255, 255, 0.75);
+      font-family: 'Montserrat', sans-serif;
+      font-size: 13.5px;
+      color: #3A2218;
+      outline: none;
+    }
+    .form-input:focus {
+      border-color: #B68B25;
+      background: #FFFFFF;
+    }
+    .checkbox-grid {
+      display: grid;
+      grid-template-columns: 1fr 1fr;
+      gap: 8px;
+    }
+    .check-pill {
+      display: flex;
+      align-items: center;
+      gap: 8px;
+      padding: 10px 12px;
+      background: rgba(255, 255, 255, 0.72);
+      border: 1px solid rgba(212, 175, 55, 0.42);
+      border-radius: 14px;
+      font-size: 12px;
+      font-weight: 500;
+      cursor: pointer;
+    }
+    .check-pill input {
+      accent-color: #9E7415;
+      width: 15px;
+      height: 15px;
+    }
+    .submit-rsvp {
+      width: 100%;
+      padding: 13px;
+      border-radius: 999px;
+      border: 1px solid rgba(212, 175, 55, 0.85);
+      background: linear-gradient(135deg, #E5C168 0%, #C59B27 100%);
+      color: #2B1805;
+      font-family: 'Cinzel', serif;
+      font-size: 13px;
+      font-weight: 700;
+      letter-spacing: 1px;
+      cursor: pointer;
+      margin-top: 6px;
+      box-shadow: 0 6px 20px rgba(197, 155, 39, 0.28), inset 0 1px 0 rgba(255, 255, 255, 0.7);
+      transition: transform 0.2s ease;
+    }
+    .submit-rsvp:active {
+      transform: scale(0.98);
+    }
+  </style>
+</head>
+<body>
+
+  <div class="stage">
+    <!-- Your Final Canva Video -->
+    <video class="bg-reel" id="inviteVideo" autoplay muted playsinline preload="auto">
+      <source src="wedding_reel.mp4" type="video/mp4">
+      Your browser does not support HTML5 video.
+    </video>
+
+    <!-- Minimal Glass Top Controls -->
+    <div class="top-controls">
+      <button class="icon-btn" id="replayBtn" title="Replay" aria-label="Replay">
+        <svg viewBox="0 0 24 24"><path d="M3 12a9 9 0 1 0 9-9 9.75 9.75 0 0 0-6.74 2.74L3 8"/><path d="M3 3v5h5"/></svg>
+      </button>
+      <button class="icon-btn" id="playPauseBtn" title="Play or Pause" aria-label="Play or Pause">
+        <svg id="playPauseIcon" viewBox="0 0 24 24"><rect x="6" y="4" width="4" height="16"/><rect x="14" y="4" width="4" height="16"/></svg>
+      </button>
+      <button class="icon-btn" id="muteBtn" title="Mute or Unmute" aria-label="Mute or Unmute">
+        <svg id="muteIcon" viewBox="0 0 24 24"><path d="M11 5L6 9H2v6h4l5 4V5z"/><line x1="23" y1="9" x2="17" y2="15"/><line x1="17" y1="9" x2="23" y2="15"/></svg>
+      </button>
+    </div>
+
+    <!-- Liquid Crystal Glass Dock (Reveals ONLY on Final RSVP Slide) -->
+    <div class="glass-dock" id="finalDock">
+      <div class="liquid-bar">
+        <button class="crystal-btn crystal-btn-gold" onclick="openModal('rsvpModal')">
+          <svg viewBox="0 0 24 24"><path d="M22 2L11 13"/><path d="M22 2l-7 20-4-9-9-4 20-7z"/></svg>
+          <span>RSVP</span>
+        </button>
+        <button class="crystal-btn" onclick="openModal('mapsModal')">
+          <svg viewBox="0 0 24 24"><path d="M21 10c0 7-9 13-9 13s-9-6-9-13a9 9 0 0 1 18 0z"/><circle cx="12" cy="10" r="3"/></svg>
+          <span>Venues</span>
+        </button>
+        <button class="crystal-btn" onclick="downloadCalendar()">
+          <svg viewBox="0 0 24 24"><rect x="3" y="4" width="18" height="18" rx="2" ry="2"/><line x1="16" y1="2" x2="16" y2="6"/><line x1="8" y1="2" x2="8" y2="6"/><line x1="3" y1="10" x2="21" y2="10"/></svg>
+          <span>Save</span>
+        </button>
+      </div>
+    </div>
+  </div>
+
+  <!-- Google Maps Venue Modal -->
+  <div class="modal-backdrop" id="mapsModal" onclick="closeModal('mapsModal')">
+    <div class="modal-sheet" onclick="event.stopPropagation()">
+      <div class="modal-top">
+        <div class="modal-heading">Event Venues & Directions</div>
+        <button class="close-btn" onclick="closeModal('mapsModal')">✕</button>
+      </div>
+      <div class="venue-stack">
+        <a class="venue-item" href="https://maps.google.com/?q=604,+Sindur+Saamarthya,+Opposite+Celestia,+Karmchari+Nagar,+Naranpura,+Ahmedabad,+Gujarat+380063" target="_blank" rel="noopener">
+          <div>
+            <h4>23–24 Jan · Mehndi & Ganesh Sthapana</h4>
+            <p>604, Sindur Saamarthya, Naranpura</p>
+          </div>
+          <span class="pin-go">Maps ➔</span>
+        </a>
+
+        <a class="venue-item" href="https://maps.app.goo.gl/xDWk95iCUhf5x7ju5?g_st=ic" target="_blank" rel="noopener">
+          <div>
+            <h4>24 Jan · Sangeet & Engagement</h4>
+            <p>Shree Jain Visha Oswal Club, Ambawadi</p>
+          </div>
+          <span class="pin-go">Maps ➔</span>
+        </a>
+
+        <a class="venue-item" href="https://maps.app.goo.gl/7ipg2rsLmVSjQScw7?g_st=ic" target="_blank" rel="noopener">
+          <div>
+            <h4>25 Jan · Mameru & Haldi</h4>
+            <p>Bliss Dine Restaurant & Banquet, Chandlodiya</p>
+          </div>
+          <span class="pin-go">Maps ➔</span>
+        </a>
+
+        <a class="venue-item" href="https://maps.app.goo.gl/jtJSpovsMGF6thFt5?g_st=ic" target="_blank" rel="noopener">
+          <div>
+            <h4>26 Jan · The Royal Wedding</h4>
+            <p>Brooks Restaurant & Banquets, Chandkheda</p>
+          </div>
+          <span class="pin-go">Maps ➔</span>
+        </a>
+      </div>
+    </div>
+  </div>
+
+  <!-- Interactive RSVP Modal -->
+  <div class="modal-backdrop" id="rsvpModal" onclick="closeModal('rsvpModal')">
+    <div class="modal-sheet" onclick="event.stopPropagation()">
+      <div class="modal-top">
+        <div class="modal-heading">Confirm Your Presence</div>
+        <button class="close-btn" onclick="closeModal('rsvpModal')">✕</button>
+      </div>
+
+      <form onsubmit="sendWhatsAppRSVP(event)">
+        <div class="form-group">
+          <label class="form-label">Guest / Family Name</label>
+          <input type="text" id="guestName" class="form-input" placeholder="e.g., Rahul Shah & Family" required>
+        </div>
+
+        <div class="form-group">
+          <label class="form-label">Number of Guests Attending</label>
+          <select id="guestCount" class="form-select">
+            <option value="1 Guest">1 Guest</option>
+            <option value="2 Guests" selected>2 Guests</option>
+            <option value="3 Guests">3 Guests</option>
+            <option value="4 Guests">4 Guests</option>
+            <option value="5+ Guests">5+ Guests</option>
+          </select>
+        </div>
+
+        <div class="form-group">
+          <label class="form-label">Events Attending</label>
+          <div class="checkbox-grid">
+            <label class="check-pill"><input type="checkbox" name="events" value="Mehndi (23 Jan)" checked> Mehndi (23 Jan)</label>
+            <label class="check-pill"><input type="checkbox" name="events" value="Sangeet (24 Jan)" checked> Sangeet (24 Jan)</label>
+            <label class="check-pill"><input type="checkbox" name="events" value="Haldi & Mameru (25 Jan)" checked> Haldi (25 Jan)</label>
+            <label class="check-pill"><input type="checkbox" name="events" value="Wedding (26 Jan)" checked> Wedding (26 Jan)</label>
+          </div>
+        </div>
+
+        <button type="submit" class="submit-rsvp">Confirm via WhatsApp ➔</button>
+      </form>
+    </div>
+  </div>
+
+  <script>
+    // REPLACE THIS NUMBER WITH YOUR WHATSAPP NUMBER (with country code 91, no + sign)
+    const HOST_WHATSAPP_NUMBER = "918320911267";
+
+    // Timestamp (in seconds) when the final RSVP page appears in your video
+    const RSVP_PAGE_START_TIME = 45.0;
+
+    const video = document.getElementById('inviteVideo');
+    const finalDock = document.getElementById('finalDock');
+    const muteBtn = document.getElementById('muteBtn');
+    const muteIcon = document.getElementById('muteIcon');
+    const playPauseBtn = document.getElementById('playPauseBtn');
+    const playPauseIcon = document.getElementById('playPauseIcon');
+    const replayBtn = document.getElementById('replayBtn');
+
+    const SVG_PLAY = '<polygon points="5 3 19 12 5 21 5 3"/>';
+    const SVG_PAUSE = '<rect x="6" y="4" width="4" height="16"/><rect x="14" y="4" width="4" height="16"/>';
+    const SVG_MUTED = '<path d="M11 5L6 9H2v6h4l5 4V5z"/><line x1="23" y1="9" x2="17" y2="15"/><line x1="17" y1="9" x2="23" y2="15"/>';
+    const SVG_SOUND = '<path d="M11 5L6 9H2v6h4l5 4V5z"/><path d="M15.54 8.46a5 5 0 0 1 0 7.07"/><path d="M19.07 4.93a10 10 0 0 1 0 14.14"/>';
+
+    video.addEventListener('timeupdate', () => {
+      if (video.currentTime >= RSVP_PAGE_START_TIME) {
+        finalDock.classList.add('visible');
+      } else {
+        finalDock.classList.remove('visible');
+      }
+    });
+
+    video.addEventListener('ended', () => {
+      finalDock.classList.add('visible');
+      playPauseIcon.innerHTML = SVG_PLAY;
+    });
+
+    muteBtn.addEventListener('click', () => {
+      video.muted = !video.muted;
+      muteIcon.innerHTML = video.muted ? SVG_MUTED : SVG_SOUND;
+    });
+
+    playPauseBtn.addEventListener('click', () => {
+      if (video.paused) {
+        if (video.ended) video.currentTime = 0;
+        video.play();
+        playPauseIcon.innerHTML = SVG_PAUSE;
+      } else {
+        video.pause();
+        playPauseIcon.innerHTML = SVG_PLAY;
+      }
+    });
+
+    replayBtn.addEventListener('click', () => {
+      video.currentTime = 0;
+      finalDock.classList.remove('visible');
+      video.play();
+      playPauseIcon.innerHTML = SVG_PAUSE;
+    });
+
+    function openModal(id) {
+      document.getElementById(id).style.display = 'flex';
+    }
+
+    function closeModal(id) {
+      document.getElementById(id).style.display = 'none';
+    }
+
+    function sendWhatsAppRSVP(e) {
+      e.preventDefault();
+      const name = document.getElementById('guestName').value.trim();
+      const count = document.getElementById('guestCount').value;
+      const checked = Array.from(document.querySelectorAll('input[name="events"]:checked')).map(el => el.value);
+      const eventList = checked.length > 0 ? checked.join(' • ') : 'All Wedding Celebrations';
+
+      const msg = [
+        "॥ શ્રી ગણેશાય નમઃ ॥ 🙏✨",
+        "",
+        "Heartiest congratulations & warmest blessings to *Virti & Divyesh*! 💍🌸",
+        "We are overjoyed to join your royal celebrations (#jodiVISHesh) 🥂💃",
+        "",
+        `👤 *Name:* ${name}`,
+        `👨‍👩‍👧‍👦 *Guests:* ${count}`,
+        `🎊 *Joining:* ${eventList}`,
+        "",
+        "Wishing the couple a lifetime of love, laughter & togetherness! ❤️🪔"
+      ].join("\n");
+
+      const encoded = encodeURIComponent(msg);
+      const isMobile = /Android|iPhone|iPad|iPod/i.test(navigator.userAgent);
+      // Bypasses the intermediate wa.me landing page on mobile to open the WhatsApp app chat directly
+      const waUrl = isMobile
+        ? `https://api.whatsapp.com/send?phone=${HOST_WHATSAPP_NUMBER}&text=${encoded}`
+        : `https://web.whatsapp.com/send?phone=${HOST_WHATSAPP_NUMBER}&text=${encoded}`;
+
+      window.location.href = waUrl;
+      closeModal('rsvpModal');
+    }
+
+    function downloadCalendar() {
+      const ics = [
+        "BEGIN:VCALENDAR",
+        "VERSION:2.0",
+        "PRODID:-//Virti & Divyesh Wedding//EN",
+        "BEGIN:VEVENT",
+        "SUMMARY:Virti & Divyesh Wedding (#jodiVISHesh)",
+        "DESCRIPTION:Hasth Melap Muhurat at 12:39 PM. Venue: Brooks Restaurant and Banquets, Chandkheda, Ahmedabad.",
+        "LOCATION:Brooks Restaurant and Banquets, Tragad, Chandkheda, Ahmedabad",
+        "DTSTART:20270126T070900Z",
+        "DTEND:20270126T103000Z",
+        "END:VEVENT",
+        "END:VCALENDAR"
+      ].join("\r\n");
+
+      const blob = new Blob([ics], { type: 'text/calendar;charset=utf-8' });
+      const link = document.createElement('a');
+      link.href = URL.createObjectURL(blob);
+      link.download = "Virti_Divyesh_Wedding.ics";
+      document.body.appendChild(link);
+      link.click();
+      document.body.removeChild(link);
+    }
+  </script>
+</body>
+</html>
